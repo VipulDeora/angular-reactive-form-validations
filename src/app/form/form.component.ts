@@ -1,17 +1,24 @@
 import {Component, DoCheck, OnChanges, OnInit} from '@angular/core';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {bind} from '@angular/core/src/render3/instructions';
+import {b} from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-form',
   templateUrl: 'form.component.html'
 })
 
-export class FormComponent implements OnInit, OnChanges, DoCheck {
+export class FormComponent implements OnInit {
 
   form: FormGroup;
   prohibitedNames = ['Raj', 'Ram', 'Shyam', 'Raju'];
-
+  checkValidity = {
+    email: true,
+    password: true,
+    addr1: true,
+    fname: true,
+    lname: true,
+  };
   constructor(private fb: FormBuilder) { console.log('constructor'); }
 
   validateFirstName(control: AbstractControl): {[s: string]: boolean} {
@@ -21,16 +28,15 @@ export class FormComponent implements OnInit, OnChanges, DoCheck {
     return null;
   }
 
+  validateLastName(control: AbstractControl): {[s: string]: boolean} {
+    if (this.form && this.form.value.fname === control.value) {
+      return { 'invalidLastName': true};
+    }
+    return null;
+  }
+
   show() {
     console.log(this.form);
-  }
-
-  ngDoCheck() {
-    console.log('docheck');
-  }
-
-  ngOnChanges() {
-    console.log('onchanges');
   }
 
   ngOnInit() {
@@ -48,14 +54,51 @@ export class FormComponent implements OnInit, OnChanges, DoCheck {
       gender: ['female', Validators.required],
       addr1: [null],
       fname: [null, [Validators.required, this.validateFirstName.bind(this)]],
-      lname: [null, Validators.required],
-      city: [null],
-      state: [null],
-      zip: [null]
+      lname: [null, [Validators.required, this.validateLastName.bind(this)]],
+      isRequired: [false]
+    });
+    this.form.get('email').statusChanges
+      .subscribe(value => this.checkValidity['email'] = value);
+    this.form.get('password').statusChanges
+      .subscribe(value => this.checkValidity['password'] = value);
+    this.form.get('addr1').statusChanges
+      .subscribe(value => this.checkValidity['addr1'] = value);
+    this.form.get('fname').statusChanges
+      .subscribe(value => this.checkValidity['fname'] = value);
+    this.form.get('lname').statusChanges
+      .subscribe(value => this.checkValidity['lname'] = value);
+    this.form.get('isRequired').valueChanges
+      .subscribe(value => {
+        if (value) {
+          this.form.get('addr1').setValidators(Validators.required);
+          this.form.get('addr1').updateValueAndValidity();
+        } else {
+          this.form.get('addr1').setValidators(null);
+          this.form.get('addr1').updateValueAndValidity();
+        }
+      });
+  }
+
+  printErrors() {
+    Object.keys(this.form.controls).forEach((key) => {
+      const control = this.form.get(key);
+      if (control instanceof  FormControl) {
+        if (control.errors) {
+          this.checkValidity[key] = false;
+        }
+      }
     });
   }
 
+  isInvalid(field: string): boolean {
+    return this.form.controls[field].invalid && this.form.controls[field].touched ;
+  }
+
   submit() {
-    console.log(this.form.value);
+    if (this.form.valid) {
+      console.log(this.form);
+    } else {
+      this.printErrors();
+    }
   }
 }

@@ -1,29 +1,39 @@
 <div class="container-fluid" style="background-color: #000;">
   <div class="row">
     <div class="col-sm-12" style="color: #fff; text-align: center">
-      <h3>Form Validations</h3>
+      <h3>Basic Form Validations</h3>
     </div>
   </div>
 </div>
 <div class="container" style="margin-top: 15px;">
   <div class="row">
-    <form class="col-sm-12 col-md-8 offset-md-2" [formGroup]="form" (ngSubmit)="submit()" ngNativeValidate>
+    <form class="col-sm-12 col-md-8 offset-md-2" [formGroup]="form" (ngSubmit)="submit()">
       <div class="form-row">
         <div class="form-group col-md-6">
-          <label for="inputEmail4">Email</label>
+          <label for="inputEmail4">Email*</label>
           <input type="email" class="form-control"
                  [ngClass]="form.controls['email'].touched ? (form.controls['email'].invalid ? 'is-invalid' : 'is-valid') : ''"
-                 formControlName="email" id="inputEmail4" placeholder="Email" required>
-          <div class="invalid-feedback" *ngIf="form.controls['email'].invalid && form.controls['email'].touched">Should be of the form abc@example.com</div>
+                 formControlName="email" id="inputEmail4" placeholder="Email">
+          <app-error-display *ngIf="form.get('email').errors && form.get('email').errors['pattern']"
+                             [displayError]="isInvalid('email')"
+                             [message]="'Should be of the form abc@test.com'"></app-error-display>
+          <app-error-display *ngIf="form.get('email').errors && form.get('email').errors['required']"
+                             [displayError]="isInvalid('email')"
+                             [message]="'Field Required'"></app-error-display>
+          <app-error-display [displayError]="!checkValidity['email'] && form.get('email').invalid" [message]="'Field Required'"></app-error-display>
         </div>
         <div class="form-group col-md-6">
-          <label for="inputPassword4">Password</label>
+          <label for="inputPassword4">Password*</label>
           <input type="password" class="form-control"
                  [ngClass]="form.controls['password'].touched ? (form.controls['password'].invalid ? 'is-invalid' : 'is-valid') : ''"
-                 formControlName="password" id="inputPassword4" placeholder="Password" required>
-          <div class="invalid-feedback" *ngIf="form.controls['password'].invalid && form.controls['password'].touched">
-            Password must be at least 5 characters, no more than 15 characters, and must include at least one upper case letter, one lower case letter, and one numeric digit.
-          </div>
+                 formControlName="password" id="inputPassword4" placeholder="Password">
+          <app-error-display *ngIf="form.get('password').errors && form.get('password').errors['pattern']"
+                             [displayError]="isInvalid('password')"
+                             [message]="'Password must be at least 5 characters, no more than 15 characters, and must include at least one upper case letter, one lower case letter, and one numeric digit.'"></app-error-display>
+          <app-error-display *ngIf="form.get('password').errors && form.get('password').errors['required']"
+                             [displayError]="isInvalid('password')"
+                             [message]="'Field Required'"></app-error-display>
+          <app-error-display [displayError]="!checkValidity['password'] && form.get('password').invalid" [message]="'Field Required'"></app-error-display>
         </div>
       </div>
       <div class="row justify-content-center">
@@ -38,48 +48,53 @@
       </div>
       <div class="form-row">
         <div class="form-group col-md-6">
-          <label for="fname">First Name</label>
+          <label for="fname">First Name*</label>
           <input type="text"
                  [ngClass]="form.controls['fname'].touched ? (form.controls['fname'].invalid ? 'is-invalid' : 'is-valid') : ''"
                  class="form-control" formControlName="fname" id="fname">
-          <div class="invalid-feedback" *ngIf="form.get('fname').errors && form.get('fname').errors['invalidName']">Cannot be amongst {{prohibitedNames}}</div>
+          <app-error-display *ngIf="form.get('fname').errors && form.get('fname').errors['invalidName']"
+                             [displayError]="isInvalid('fname')"
+                             [message]="'Cannot be among' + prohibitedNames"></app-error-display>
+          <app-error-display *ngIf="form.get('fname').errors && form.get('fname').errors['required']"
+                             [displayError]="isInvalid('fname')"
+                             [message]="'Field Required'"></app-error-display>
+          <app-error-display [displayError]="!checkValidity['fname'] && form.get('fname').invalid" [message]="'Field Required'"></app-error-display>
         </div>
         <div class="form-group col-md-6">
-          <label for="lname">Last Name</label>
-          <input type="text" class="form-control" formControlName="lname" id="lname">
+          <label for="lname">Last Name*</label>
+          <input type="text"
+                 [ngClass]="form.controls['lname'].touched ? (form.controls['lname'].invalid ? 'is-invalid' : 'is-valid') : ''"
+                 class="form-control" formControlName="lname" id="lname">
+          <app-error-display *ngIf="form.get('lname').errors && form.get('lname').errors['invalidLastName']"
+                             [displayError]="isInvalid('lname')"
+                             [message]="'Cannot be same as ' + form.value.fname"></app-error-display>
+          <app-error-display *ngIf="(form.get('lname').errors && form.get('lname').errors['required'])"
+                             [displayError]="isInvalid('lname')"
+                             [message]="'Field Required'"></app-error-display>
+          <app-error-display [displayError]="!checkValidity['lname'] && form.get('lname').invalid" [message]="'Field Required'"></app-error-display>
         </div>
       </div>
       <div class="form-group">
         <label for="inputAddress">Address</label>
-        <input type="text" class="form-control" formControlName="addr1" id="inputAddress" placeholder="1234 Main St">
-      </div>
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label for="inputCity">City</label>
-          <input type="text" class="form-control" formControlName="city" id="inputCity">
-        </div>
-        <div class="form-group col-md-4">
-          <label for="inputState">State</label>
-          <select id="inputState" formControlName="state" class="form-control">
-            <option selected>Choose...</option>
-            <option>...</option>
-          </select>
-        </div>
-        <div class="form-group col-md-2">
-          <label for="inputZip">Zip</label>
-          <input type="text"  formControlName="zip" class="form-control" id="inputZip">
-        </div>
+        <input type="text"
+               [ngClass]="form.controls['addr1'].touched ? (form.controls['addr1'].invalid ? 'is-invalid' : 'is-valid') : ''"
+               class="form-control" formControlName="addr1" id="inputAddress" placeholder="1234 Main St">
+        <app-error-display *ngIf="form.get('addr1').errors && form.get('addr1').errors['required']"
+                           [displayError]="isInvalid('addr1')"
+                           [message]="'Field Required'"></app-error-display>
+        <!--<app-error-display [displayError]="!checkValidity['addr1'] && form.get('addr1').invalid" [message]="'Field Required'"></app-error-display>-->
       </div>
       <div class="form-group">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck">
+          <input class="form-check-input"
+                 type="checkbox" id="gridCheck" formControlName="isRequired">
           <label class="form-check-label" for="gridCheck">
-            Check me out
+            Make Address field required
           </label>
         </div>
       </div>
       <div class="d-flex justify-content-center">
-        <button type="submit" [disabled]="form.invalid" class="btn btn-primary col-xs-12 col-md-4">Submit</button>
+        <button type="submit" class="btn btn-primary col-xs-12 col-md-4">Submit</button>
       </div>
     </form>
 </div>

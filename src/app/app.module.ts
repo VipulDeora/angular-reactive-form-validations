@@ -6,11 +6,13 @@ import {FormComponent} from './form/form.component';
 import {RouterModule} from '@angular/router';
 import {appRoutes} from './app.routing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {ErrorDisplayComponent} from './form/error-display/error-display.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    FormComponent
+    FormComponent,
+    ErrorDisplayComponent
   ],
   imports: [
     BrowserModule,
