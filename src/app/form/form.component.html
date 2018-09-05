@@ -12,7 +12,6 @@
         <div class="form-group col-md-6">
           <label for="inputEmail4">Email</label>
           <input type="email" class="form-control"
-                 pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
                  [ngClass]="form.controls['email'].touched ? (form.controls['email'].invalid ? 'is-invalid' : 'is-valid') : ''"
                  formControlName="email" id="inputEmail4" placeholder="Email" required>
           <div class="invalid-feedback" *ngIf="form.controls['email'].invalid && form.controls['email'].touched">Should be of the form abc@example.com</div>
@@ -20,7 +19,6 @@
         <div class="form-group col-md-6">
           <label for="inputPassword4">Password</label>
           <input type="password" class="form-control"
-                 pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,15}$"
                  [ngClass]="form.controls['password'].touched ? (form.controls['password'].invalid ? 'is-invalid' : 'is-valid') : ''"
                  formControlName="password" id="inputPassword4" placeholder="Password" required>
           <div class="invalid-feedback" *ngIf="form.controls['password'].invalid && form.controls['password'].touched">
@@ -28,25 +26,32 @@
           </div>
         </div>
       </div>
-      <div class="row justify-content-md-center is-valid">
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio"
-                 formControlName="gender" id="inlineRadio1" value="male">
-          <label class="form-check-label" for="inlineRadio1">Male</label>
+      <div class="row justify-content-center">
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" formControlName="gender" id="inlineRadio1" value="male" class="custom-control-input">
+          <label class="custom-control-label" for="inlineRadio1">Male</label>
         </div>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio"
-                 formControlName="gender" id="inlineRadio2" value="female">
-          <label class="form-check-label" for="inlineRadio2">Female</label>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" formControlName="gender" id="inlineRadio2" value="female" class="custom-control-input">
+          <label class="custom-control-label" for="inlineRadio2">Female</label>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="fname">First Name</label>
+          <input type="text"
+                 [ngClass]="form.controls['fname'].touched ? (form.controls['fname'].invalid ? 'is-invalid' : 'is-valid') : ''"
+                 class="form-control" formControlName="fname" id="fname">
+          <div class="invalid-feedback" *ngIf="form.get('fname').errors && form.get('fname').errors['invalidName']">Cannot be amongst {{prohibitedNames}}</div>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="lname">Last Name</label>
+          <input type="text" class="form-control" formControlName="lname" id="lname">
         </div>
       </div>
       <div class="form-group">
         <label for="inputAddress">Address</label>
         <input type="text" class="form-control" formControlName="addr1" id="inputAddress" placeholder="1234 Main St">
-      </div>
-      <div class="form-group">
-        <label for="inputAddress2">Address 2</label>
-        <input type="text" class="form-control" formControlName="addr2" id="inputAddress2" placeholder="Apartment, studio, or floor">
       </div>
       <div class="form-row">
         <div class="form-group col-md-6">
@@ -73,6 +78,8 @@
           </label>
         </div>
       </div>
-      <button type="submit" [disabled]="form.invalid" class="btn btn-primary">Submit</button>
+      <div class="d-flex justify-content-center">
+        <button type="submit" [disabled]="form.invalid" class="btn btn-primary col-xs-12 col-md-4">Submit</button>
+      </div>
     </form>
 </div>
