@@ -77,6 +77,14 @@ export class FormComponent implements OnInit {
           this.form.get('addr1').updateValueAndValidity();
         }
       });
+    this.form.get('fname').valueChanges
+      .subscribe(value => {
+        if (value === this.form.value.lname) {
+          this.form.get('lname').setErrors({'invalidLastName': true});
+        } else {
+          this.form.get('lname').setErrors(null);
+        }
+      });
   }
 
   printErrors() {

@@ -79,10 +79,7 @@
         <input type="text"
                [ngClass]="form.controls['addr1'].touched ? (form.controls['addr1'].invalid ? 'is-invalid' : 'is-valid') : ''"
                class="form-control" formControlName="addr1" id="inputAddress" placeholder="1234 Main St">
-        <app-error-display *ngIf="form.get('addr1').errors && form.get('addr1').errors['required']"
-                           [displayError]="isInvalid('addr1')"
-                           [message]="'Field Required'"></app-error-display>
-        <!--<app-error-display [displayError]="!checkValidity['addr1'] && form.get('addr1').invalid" [message]="'Field Required'"></app-error-display>-->
+        <app-error-display [displayError]="!checkValidity['addr1'] && form.get('addr1').invalid" [message]="'Field Required'"></app-error-display>
       </div>
       <div class="form-group">
         <div class="form-check">
