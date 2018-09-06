@@ -29,7 +29,7 @@ export class FormComponent implements OnInit {
   }
 
   validateLastName(control: AbstractControl): {[s: string]: boolean} {
-    if (this.form && this.form.value.fname === control.value) {
+    if (this.form && this.form.value.fname === control.value && control.value !== null) {
       return { 'invalidLastName': true};
     }
     return null;
@@ -81,8 +81,8 @@ export class FormComponent implements OnInit {
       .subscribe(value => {
         if (value === this.form.value.lname) {
           this.form.get('lname').setErrors({'invalidLastName': true});
-        } else {
-          this.form.get('lname').setErrors(null);
+        } else if (this.form.value.lname === null) {
+          this.form.get('lname').setErrors({'required': true});
         }
       });
   }
