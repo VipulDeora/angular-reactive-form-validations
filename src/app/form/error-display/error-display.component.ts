@@ -6,6 +6,6 @@ import {Component, Input} from '@angular/core';
 })
 export class ErrorDisplayComponent {
 
-  @Input() displayError: boolean;
+  @Input() displayError = true;
   @Input() message: boolean;
 }

@@ -1,7 +1,10 @@
-import {Component, DoCheck, OnChanges, OnInit} from '@angular/core';
-import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {bind} from '@angular/core/src/render3/instructions';
-import {b} from '@angular/core/src/render3';
+import {Component, OnInit} from '@angular/core';
+import {AbstractControl, AsyncValidatorFn, Form, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Subject} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {ValidityService} from './validity.service';
+import {usernameValidator} from './custom-validators';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-form',
@@ -19,33 +22,48 @@ export class FormComponent implements OnInit {
     fname: true,
     lname: true,
   };
-  constructor(private fb: FormBuilder) { console.log('constructor'); }
+  c = new Subject<any>();
 
-  validateFirstName(control: AbstractControl): {[s: string]: boolean} {
+  constructor(private fb: FormBuilder,
+               private http: HttpClient,
+               private validityService: ValidityService) {
+    console.log('constructor');
+  }
+
+  validateFirstName(control: AbstractControl): { [s: string]: boolean } {
     if (this.prohibitedNames.includes(control.value)) {
-      return { 'invalidName': true};
+      return {'invalidName': true};
     }
     return null;
   }
 
-  validateLastName(control: AbstractControl): {[s: string]: boolean} {
+  validateLastName(control: AbstractControl): { [s: string]: boolean } {
     if (this.form && this.form.value.fname === control.value && control.value !== null) {
-      return { 'invalidLastName': true};
+      return {'invalidLastName': true};
     }
     return null;
   }
 
   show() {
     console.log(this.form);
+    this.c.next('something');
   }
 
   ngOnInit() {
     console.log('oninit');
+    this.c.subscribe(val => {
+    });
     this.form = this.fb.group({
+      username: [null, {
+        validators: [],
+        asyncValidators: this.checkUsernameValidity.bind(this),
+        updateOn: 'blur'
+      }],
       email: [null, [
         Validators.required,
         Validators.email,
-        Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
+        Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]
+      ],
       password: [null, [
         Validators.required,
         Validators.minLength(5),
@@ -90,7 +108,7 @@ export class FormComponent implements OnInit {
   printErrors() {
     Object.keys(this.form.controls).forEach((key) => {
       const control = this.form.get(key);
-      if (control instanceof  FormControl) {
+      if (control instanceof FormControl) {
         if (control.errors) {
           this.checkValidity[key] = false;
         }
@@ -99,9 +117,15 @@ export class FormComponent implements OnInit {
   }
 
   isInvalid(field: string): boolean {
-    return this.form.controls[field].invalid && this.form.controls[field].touched ;
+    return this.form.controls[field].invalid && this.form.controls[field].touched;
   }
 
+  checkUsernameValidity(control: FormControl) {
+    return this.validityService.getValidUsername(control.value)
+      .pipe(
+        map((res: {isValid: boolean}) => res.isValid ? null : {usernameTaken: true})
+      );
+  }
   submit() {
     if (this.form.valid) {
       console.log(this.form);

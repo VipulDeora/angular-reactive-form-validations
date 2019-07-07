@@ -7,6 +7,7 @@ import {RouterModule} from '@angular/router';
 import {appRoutes} from './app.routing';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ErrorDisplayComponent} from './form/error-display/error-display.component';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import {ErrorDisplayComponent} from './form/error-display/error-display.componen
     BrowserModule,
     ReactiveFormsModule,
     FormsModule,
+    HttpClientModule,
     RouterModule.forRoot(appRoutes)
   ],
   providers: [],
